@@ -1,4 +1,4 @@
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, Pressable } from "react-native";
 import React from "react";
 import Header from "../components/Header/Header";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -6,7 +6,9 @@ import { styles } from "../styles/checkoutScreen-style";
 
 import ButtonSubmit from "../constant/ButtonSubmit/ButtonSubmit";
 
-export default function CheckoutScreen() {
+export default function CheckoutScreen(props) {
+  const { navigation } = props;
+
   return (
     <View style={styles.checkout__container}>
       <Header title="Check out" navigator="OrderScreen" />
@@ -14,12 +16,16 @@ export default function CheckoutScreen() {
         <View style={styles.card__address__container}>
           <View style={styles.card__header}>
             <Text style={styles.text__header}>Shipping Address</Text>
-            <MaterialCommunityIcons
+            <Pressable
               style={styles.icon__header}
-              name="pencil-outline"
-              size={18}
-              color="black"
-            />
+              onPress={() => navigation.navigate("AddShippingAddressScreen")}
+            >
+              <MaterialCommunityIcons
+                name="pencil-outline"
+                size={18}
+                color="black"
+              />
+            </Pressable>
           </View>
           <View style={styles.card__body}>
             <View style={styles.card__text__name}>
@@ -27,6 +33,7 @@ export default function CheckoutScreen() {
             </View>
             <View style={styles.card__text__address}>
               <Text style={styles.text__address}>25 Ton Duc Thang Street</Text>
+              <Text style={styles.text__address}>0987112376</Text>
             </View>
           </View>
         </View>
@@ -51,7 +58,12 @@ export default function CheckoutScreen() {
         </View>
       </View>
       <View style={styles.checkout__footer}>
-        <ButtonSubmit navLink="" navigation="submitOrder" title="submit order"/>
+        <ButtonSubmit
+          navLink=""
+          navigation={navigation}
+          title="submit order"
+          isCheck="submitOrder"
+        />
       </View>
     </View>
   );

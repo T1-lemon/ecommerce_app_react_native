@@ -1,16 +1,28 @@
 import { View, Text, Pressable, Modal } from "react-native";
 import React, { useState } from "react";
 import { styles } from "./button-submit";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function ButtonSubmit(props) {
-  const { navLink, navigation, title } = props;
+  const { navLink, navigation, title, isCheck } = props;
   const [modalVisible, setModalVisible] = useState(false);
 
   const handlePressNavigate = () => {
-    if (navigation !== "submitOrder") {
-      navigation.navigate(navLink);
-    }
-    return;
+    isCheck === "submitOrder"
+      ? setModalVisible(true)
+      : isCheck === "saveAddress"
+      ? handleSaveAddress()
+      : navigation.navigate(navLink);
+  };
+
+  const handleSaveAddress = () => {
+    console.log("abc");
+    navigation.navigate("CheckoutScreen");
+  };
+
+  const handleSubmitOrder = () => {
+    navigation.navigate("OrderScreen");
+    setModalVisible(false);
   };
 
   return (
@@ -26,12 +38,22 @@ export default function ButtonSubmit(props) {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Hello World!</Text>
+            <Text style={styles.modalText}>Are you sure submit order !</Text>
             <Pressable
-              style={[styles.button, styles.buttonClose]}
+              style={styles.buttonClose}
               onPress={() => setModalVisible(!modalVisible)}
             >
-              <Text style={styles.textStyle}>Hide Modal</Text>
+              <MaterialCommunityIcons
+                name="window-close"
+                size={20}
+                color="black"
+              />
+            </Pressable>
+            <Pressable
+              style={styles.btn__container}
+              onPress={() => handleSubmitOrder()}
+            >
+              <Text style={styles.btn__text}>Continue Order</Text>
             </Pressable>
           </View>
         </View>

@@ -13,6 +13,7 @@
     "@react-native-masked-view/masked-view": "0.2.8",
     "@react-navigation/native": "^6.1.1",
     "@react-navigation/stack": "^6.3.10",
+    "@reduxjs/toolkit": "^1.9.1",
     "expo": "~47.0.8",
     "expo-react-native-shadow": "^1.0.3",
     "expo-status-bar": "~1.4.2",
