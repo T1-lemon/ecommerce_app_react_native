@@ -14,6 +14,8 @@ export default function BoardingScreen(props) {
         title="abc"
         onPress={() => navigation.navigate("CartScreen")}
       ></Button>
+      <Text>abcdef</Text>
+      <Text>datag</Text>
     </View>
   );
 }
