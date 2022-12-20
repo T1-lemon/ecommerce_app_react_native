@@ -2,10 +2,12 @@ import { View, Text, Button } from "react-native";
 import React from "react";
 import { styles } from "../styles/orderScreen-style";
 import Header from "../components/Header/Header";
+import Footer from "../constant/Footer/Footer";
 
-export default function OrderScreen() {
+export default function OrderScreen(props) {
+  const { navigation } = props;
   return (
-    <View>
+    <View style={styles.order__container}>
       <Header title="My Order" navigator="OrderScreen" />
       <View style={styles.order__body}>
         <View style={styles.card__order__container}>
@@ -53,6 +55,7 @@ export default function OrderScreen() {
           </View>
         </View>
       </View>
+      <Footer navigation={navigation}></Footer>
     </View>
   );
 }

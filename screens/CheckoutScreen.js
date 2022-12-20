@@ -6,7 +6,8 @@ import { styles } from "../styles/checkoutScreen-style";
 
 import ButtonSubmit from "../constant/ButtonSubmit/ButtonSubmit";
 
-export default function CheckoutScreen() {
+export default function CheckoutScreen(props) {
+  const { navigation } = props;
   return (
     <View style={styles.checkout__container}>
       <Header title="Check out" navigator="OrderScreen" />
@@ -51,7 +52,7 @@ export default function CheckoutScreen() {
         </View>
       </View>
       <View style={styles.checkout__footer}>
-        <ButtonSubmit navLink="" navigation="submitOrder" title="submit order"/>
+      <ButtonSubmit navLink="CongratsScreen" navigation={navigation} title="submit order"/>
       </View>
     </View>
   );
