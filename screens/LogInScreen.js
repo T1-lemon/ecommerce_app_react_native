@@ -1,11 +1,50 @@
 import React from "react";
-import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
+import {
+  Text,
+  View,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  ToastAndroid,
+} from "react-native";
 import styles from "../styles/loginScreen-styles";
 import { Formik } from "formik";
 import { SignInSchema } from "../validation/validaton";
+import { useDispatch } from "react-redux";
+import { userLoginApi } from "../store/slices/userSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LogInScreen(props) {
   const { navigation } = props;
+
+  const showToastLoginSucess = () => {
+    ToastAndroid.show("Login Success, Welcome back!", ToastAndroid.SHORT);
+  };
+
+  const showToastLoginFail = () => {
+    ToastAndroid.show(
+      "Login Fail, Check your password or username!",
+      ToastAndroid.SHORT
+    );
+  };
+
+  const dispatch = useDispatch();
+  const handleSubmitLogin = (dataLogin) => {
+    const fetchLoginApi = async () => {
+      await dispatch(userLoginApi(dataLogin));
+      const message = await AsyncStorage.getItem("message");
+      if (message === "loginFail") {
+        showToastLoginFail();
+      } else {
+        showToastLoginSucess();
+        navigation.navigate("HomeScreen");
+      }
+    };
+
+    fetchLoginApi();
+    // navigation.navigate("HomeScreen");
+  };
+
   return (
     <View>
       <View style={styles.container}>
@@ -19,7 +58,7 @@ export default function LogInScreen(props) {
         <Formik
           initialValues={{ userName: "", password: "" }}
           validationSchema={SignInSchema}
-          onSubmit={() => navigation.navigate("HomeScreen")}
+          onSubmit={(values) => handleSubmitLogin(values)}
         >
           {({
             handleChange,

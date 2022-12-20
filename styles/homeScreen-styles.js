@@ -79,9 +79,10 @@ const styles = StyleSheet.create({
     },
     productImg:{
         width: '100%', 
-        height: 150, 
+        height: 160, 
         resizeMode: 'cover', 
         borderRadius: 15,
+        // resizeMode: "contain",
     },
     productName:{
         maxWidth: 160,

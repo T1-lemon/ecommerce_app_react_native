@@ -3,9 +3,10 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   cart__container: {
     flex: 1,
+  },
+  cart__body: { flex: 1,
     paddingHorizontal: 20,
   },
-  cart__body: { flex: 1 },
   cart__card__container: {
     paddingVertical: 15,
     flexDirection: "row",
@@ -54,6 +55,7 @@ export const styles = StyleSheet.create({
   },
   cart__footer: {
     // flex: 1,
+    paddingHorizontal: 20,
   },
   btn__checkout: {
     alignItems: "center",

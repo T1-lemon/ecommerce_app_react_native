@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
     header__block: {
-        marginTop: 50, 
+        marginTop: 40, 
         flexDirection: "row", 
         justifyContent: "center", 
         alignContent: "center",

@@ -5,87 +5,117 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Pressable,
+  ActivityIndicator,
+  ToastAndroid,
 } from "react-native";
 import React, { useState } from "react";
 import styles from "../styles/productScreen-styles";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { AntDesign } from "@expo/vector-icons";
+import { Fontisto } from "@expo/vector-icons";
+import { useEffect } from "react";
+import { getDetailService } from "../services/productService";
+import { getProductDetailFeedBackService } from "../services/feedBackServices";
+import { addProductToCartApi } from "../store/slices/cartSlice";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector, useDispatch } from "react-redux";
 
 export default function ProductScreen(props) {
+  const showToast = () => {
+    ToastAndroid.show("Add product to cart successfully!", ToastAndroid.SHORT);
+  };
+
+  const dispatch = useDispatch();
   const { navigation, route } = props;
   const { id, name, price, uri, description } = route.params;
   const [count, setCount] = useState(1);
+  const [productDetail, setProductDetail] = useState({});
+  const [loadingApi, setLoadingApi] = useState(false);
+
+  useEffect(() => {
+    const fetchDetailProductApi = async () => {
+      setLoadingApi(true);
+      const responeProduct = await getDetailService(id);
+      const responeFeedBack = await getProductDetailFeedBackService(id);
+      const productDetail = {
+        name: responeProduct.data.name,
+        image: responeProduct.data.image,
+        price: responeProduct.data.price,
+        description: responeProduct.data.description,
+        category: responeProduct.data.Category.category_name,
+        feedBack: responeFeedBack.data,
+      };
+      await setProductDetail(productDetail);
+      setLoadingApi(false);
+    };
+    fetchDetailProductApi();
+  }, []);
+
   const minus = () => setCount((prevCount) => prevCount - 1);
   const plus = () => setCount((prevCount) => prevCount + 1);
-  const reviewData = [
-    {
-      id: "1",
-      name: "Thanh",
-      comment: "sản phẩm này rất tốt, tôi rất thích",
-      rating: "3",
-    },
-    {
-      id: "2",
-      name: "Thanh",
-      comment: "sản phẩm này rất tốt, tôi rất thích",
-      rating: "3",
-    },
-    {
-      id: "3",
-      name: "Thanh",
-      comment: "sản phẩm này rất tốt, tôi rất thích",
-      rating: "3",
-    },
-    {
-      id: "4",
-      name: "Thanh",
-      comment: "sản phẩm này rất tốt, tôi rất thích",
-      rating: "3",
-    },
-    {
-      id: "5",
-      name: "Thanh",
-      comment: "sản phẩm này rất tốt, tôi rất thích",
-      rating: "3",
-    },
-    {
-      id: "6",
-      name: "Thanh",
-      comment: "sản phẩm này rất tốt, tôi rất thích",
-      rating: "3",
-    },
-  ];
 
+  const handleAddToCart = () => {
+    const fetchAddProductToCartApi = async () => {
+      const accessToken = await AsyncStorage.getItem('token');
+      const dataCart = {
+        id,
+        price: productDetail.price,
+        quantity: count,
+        accessToken: JSON.parse(accessToken)
+      };
+
+      await dispatch(addProductToCartApi(dataCart));
+      showToast();
+    };
+    fetchAddProductToCartApi();
+  };
   const renderReview = () => {
-    return reviewData.map((item, index) => {
-      return (
-        <View key={item.id} style={styles.reviewList}>
-          <Text>
-            <Image
-              source={{
-                uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuzhCFDTv-c6wui7nh7k1JOaPdlOpfHNuhCKFXVYYVKhiSi8UZ9_iqqUhix6YIUINw-N0&usqp=CAU",
-              }}
-              style={{ width: 40, height: 40 }}
-            />
-            {item.name}
-          </Text>
-          <Text>
-            {item.rating} <FontAwesome style={styles.starIcon} name="star" />
-          </Text>
-          <Text style={styles.commentText}>{item.comment}</Text>
-        </View>
-      );
-    });
+    return loadingApi === true ? (
+      <ActivityIndicator size="large" color="#21130d" />
+    ) : productDetail.feedBack ? (
+      productDetail.feedBack.map((item, index) => {
+        return (
+          <View key={index} style={styles.block__review__list}>
+            <View style={styles.block__review__user}>
+              <View>
+                <Image
+                  source={{
+                    uri: `${item.avatar}`,
+                  }}
+                  style={{ width: 45, height: 45, borderRadius: 25 }}
+                />
+              </View>
+              <View style={styles.block__review__rating}>
+                <Text>{item.user_name}</Text>
+                <Text style={styles.text__review__rating}>
+                  {item.rating} (average rating)
+                </Text>
+              </View>
+            </View>
+            <View>
+              <Text style={styles.commentText}>{item.comment_text}</Text>
+            </View>
+          </View>
+        );
+      })
+    ) : (
+      ""
+    );
   };
   return (
     <View style={styles.container}>
-      <FontAwesome
-        style={styles.backIcon}
-        name="chevron-left"
-        onPress={() => navigation.navigate("HomeScreen")}
-      ></FontAwesome>
       <View style={styles.content}>
         <ScrollView>
-          <Image style={styles.productImg} source={{ uri }} />
+          <View style={styles.header__block__imgProduct}>
+            <TouchableOpacity
+              style={styles.header__block__icon}
+              onPress={() => navigation.navigate("HomeScreen")}
+            >
+              <AntDesign name="left" size={17} color="black" />
+            </TouchableOpacity>
+            <Image style={styles.productImg} source={{ uri }} />
+          </View>
           <View style={styles.productInf}>
             <Text style={styles.name}>{name}</Text>
             <View style={styles.groupPrice}>
@@ -95,11 +125,21 @@ export default function ProductScreen(props) {
               </Text>
               <View style={styles.numberAddCart}>
                 <TouchableOpacity onPress={count > 1 ? minus : null}>
-                  <FontAwesome name="minus" style={styles.btnCount} />
+                  <AntDesign
+                    name="minus"
+                    size={15}
+                    style={styles.btnCount}
+                    color="black"
+                  />
                 </TouchableOpacity>
                 <Text style={styles.textCount}>{count}</Text>
                 <TouchableOpacity onPress={plus}>
-                  <FontAwesome name="plus" style={styles.btnCount} />
+                  <AntDesign
+                    name="plus"
+                    size={15}
+                    style={styles.btnCount}
+                    color="black"
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -115,7 +155,12 @@ export default function ProductScreen(props) {
 
             <View style={{ marginBottom: 15 }}>
               <Text style={styles.text}>Đánh giá sản phẩm</Text>
-              <View>{renderReview()}</View>
+              <ScrollView
+                nestedScrollEnabled={true}
+                style={styles.scroll__view__comment}
+              >
+                {renderReview()}
+              </ScrollView>
               <Text style={styles.text}>Đánh giá của bạn</Text>
               <View style={styles.yourReview}>
                 <TextInput
@@ -137,10 +182,10 @@ export default function ProductScreen(props) {
         </ScrollView>
       </View>
       <TouchableOpacity
-        onPress={() => navigation.navigate("CartScreen")}
-        style={styles.appButtonContainer}
+        onPress={() => handleAddToCart()}
+        style={styles.btn__container}
       >
-        <Text style={styles.appButtonText}>Add to cart</Text>
+        <Text style={styles.btn__text}>Add to cart</Text>
       </TouchableOpacity>
     </View>
   );
