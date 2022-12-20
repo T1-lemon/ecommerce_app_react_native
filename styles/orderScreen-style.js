@@ -1,6 +1,10 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+  order__container: {
+    width: "100%",
+    height: "100%",
+  },
   order__body: {
     marginTop: 20,
     paddingHorizontal: 20,
