@@ -19,6 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAllProductsApi } from "../store/slices/productSlice";
 import { getAllCartItemApi } from "../store/slices/cartSlice";
 import { useDispatch } from "react-redux";
+import DetailOrderScreen from "../screens/DetailOrderSceen";
 const Stack = createStackNavigator();
 
 const StackNavigator = () => {
@@ -32,6 +33,7 @@ const StackNavigator = () => {
       <Stack.Screen name="ProductScreen" component={ProductScreen} />
       <Stack.Screen name="CartScreen" component={CartScreen} />
       <Stack.Screen name="OrderScreen" component={OrderScreen} />
+      <Stack.Screen name="DetailOrderScreen" component={DetailOrderScreen} />
       <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
       <Stack.Screen
         name="AddShippingAddressScreen"

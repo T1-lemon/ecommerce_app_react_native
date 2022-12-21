@@ -29,6 +29,8 @@ export default function OrderScreen(props) {
               color="black"
               style={styles.button__order__detail}
               title="Detail"
+              onPress={() => navigation.navigate("DetailOrderScreen")}
+
             />
           </View>
         </View>
@@ -51,6 +53,7 @@ export default function OrderScreen(props) {
               color="black"
               style={styles.button__order__detail}
               title="Detail"
+              onPress={() => navigation.navigate("DetailOrderScreen")}
             />
           </View>
         </View>
